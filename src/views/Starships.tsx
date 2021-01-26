@@ -1,43 +1,26 @@
 import React, { useContext } from 'react';
+import FullCard from '../components/FullCard';
 import { StarshipsContext } from '../context';
+import { starshipsDecidedKey, starshipsKeysToPrint } from '../types/card';
 
-export interface StarshippsProps {
-
-}
-
-const Starshipps: React.FC<StarshippsProps> = () => {
-  const { starships, setStarships } = useContext(StarshipsContext);
-
-  const setStarshipsData = () => {
-    setStarships([{
-      passengers: 'string',
-      pilots: ['Array<string>'],
-      name: 'string',
-      hyperdrive_rating: 'string',
-      url: 'string',
-      cargo_capacity: 'string',
-      edited: 'string',
-      consumables: 'string',
-      max_atmosphering_speed: 'string',
-      crew: 'string',
-      length: 'string',
-      MGLT: 'string',
-      starship_class: 'string',
-      created: 'string',
-      films: ['Array<string>'],
-      model: 'string',
-      cost_in_credits: 'string',
-      manufacturer: 'string'
-    }]);
-  }
+const Starships: React.FC = () => {
+  const { starships } = useContext(StarshipsContext);
 
   return (
     <div>
-      <h1>TEST</h1>
-      <p>starships = {JSON.stringify(starships)}</p>
-      <button onClick={setStarshipsData}>Click</button>
+      <h2>Available Starships</h2>
+      <div className='container'>
+        {starships.map((starship) => (
+          <FullCard
+            info={starship}
+            keysToPrint={starshipsKeysToPrint}
+            key={starship.name}
+            boldKey={starshipsDecidedKey}
+          />
+        ))}
+      </div>
     </div>
   );
-}
+};
 
-export default Starshipps;
+export default Starships;

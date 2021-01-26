@@ -1,62 +1,21 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { ClientApi } from '../api';
-import PersonCard from '../components/PeopleCard';
+import React, { useContext } from 'react';
+import FullCard from '../components/FullCard';
 import { PeopleContext } from '../context';
-import { PeopleModel } from '../types/api';
+import { peopleDecidedKey, peopleKeysToPrint } from '../types/card';
 
-export interface PeopleProps {
-
-}
-
-let request = new ClientApi();
-
-const getResults = async (url?: string) => {
-  return await request.getPeople(url);
-}
-
-const People: React.FC<PeopleProps> = () => {
-  const { people, setPeople } = useContext(PeopleContext);
-  const [loading, setLoading] = useState<Boolean>(false);
-  const isMounted = useRef(true);
-
-
-  useEffect(() => {
-    const tempPeopleArray: PeopleModel[] = [];
-
-    const fetchData = async (url?: string) => {
-      setLoading(true);
-      const { next, results } = await getResults(url);
-
-      tempPeopleArray.push(...results);
-
-      if (isMounted.current) {
-        if (next) {
-          await fetchData(next);
-        } else {
-          setPeople(tempPeopleArray);
-          setLoading(false);
-        }
-      }
-    }
-
-    if (!people.length) {
-      fetchData();
-    } else {
-      console.log('ENTRY', people)
-    }
-    return () => { isMounted.current = false; };
-  }, [people, setPeople]);
+const People: React.FC = () => {
+  const { people } = useContext(PeopleContext);
 
   return (
     <div>
-      {loading
-        ? (<div>loading</div>)
-        : people.map(person => <PersonCard info={person} key={person.name} />)
-        // : (<div>people = {JSON.stringify(people)}</div>)
-      }
+      <h2>People</h2>
+      <div className='container'>
+        {people.map((person) => (
+          <FullCard info={person} keysToPrint={peopleKeysToPrint} key={person.name} boldKey={peopleDecidedKey} />
+        ))}
+      </div>
     </div>
-
   );
-}
+};
 
 export default People;

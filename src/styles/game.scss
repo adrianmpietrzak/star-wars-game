@@ -1,0 +1,19 @@
+.game-selector {
+  padding: 0 10px;
+
+  &__input {
+    display: none;
+
+    &:checked {
+      & + label {
+        svg {
+          fill: #f50057;
+        }
+      }
+    }
+  }
+
+  &__label {
+    cursor: pointer;
+  }
+}
