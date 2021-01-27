@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { PeopleContext, StarshipsContext } from '../context';
-import { compareResults } from '../helpers';
+import { getWinnerId, getWinnerMessage, randomItem } from '../helpers';
 import { peopleDecidedKey, peopleKeysToPrint, starshipsDecidedKey, starshipsKeysToPrint } from '../types/card';
-import { MULTI_PLAYER, PEOPLE, STARSHIPS, Player, SINGLE_PLAYER, PlayerRound } from '../types/game';
+import { MULTI_PLAYER, PEOPLE, STARSHIPS, Player, PlayerRound } from '../types/game';
 import FullCard from './FullCard';
 import PlayerCard from './PlayerCard';
 
@@ -11,7 +11,6 @@ import FlightIcon from '@material-ui/icons/Flight';
 import PeopleIcon from '@material-ui/icons/People';
 
 import '../styles/game.scss';
-import { PeopleModel, StarshipsModel } from '../types/api';
 
 export interface GameProps {
   type: string;
@@ -38,10 +37,6 @@ const Game: React.FC<GameProps> = ({ type }) => {
   const [roundItems, setRoundItems] = useState([]);
   const [roundItemsKeys, setRoundItemsKeys] = useState<string[]>([]);
 
-  const randomItem = (array: PeopleModel[] | StarshipsModel[]): PeopleModel | StarshipsModel => {
-    return array[Math.floor(Math.random() * array.length)];
-  };
-
   const rollRound = () => {
     if (itemBank) {
       const playersRound: PlayerRound[] = [];
@@ -58,55 +53,9 @@ const Game: React.FC<GameProps> = ({ type }) => {
     }
   };
 
-  const filterResult = (result: string): number | number[] => {
-    if (result.includes(',')) return parseFloat(result.replace(',', ''));
-    if (result.includes('-')) return result.split('-').map((eachResult) => parseFloat(eachResult));
-    return parseFloat(result);
-  };
-
-  const getWinnerMessage = (
-    firstPlayerResult: PeopleModel | StarshipsModel,
-    secondPlayerResult: PeopleModel | StarshipsModel,
-    key: string
-  ): string => {
-    const firstResult = { id: 1, amount: filterResult(firstPlayerResult[key]) };
-    const secondResult = {
-      id: 2,
-      amount: filterResult(secondPlayerResult[key]),
-    };
-    const res = compareResults(firstResult, secondResult);
-
-    switch (res) {
-      case -2:
-        return "Can't tell, because parameters are in the same value range";
-      case -1:
-        return "Can't tell, because at least one of parameter is undefined";
-      case 0:
-        return 'Draw';
-      case 1:
-        if (type === SINGLE_PLAYER) return 'You win';
-        return 'Player 1 win';
-      case 2:
-        if (type === SINGLE_PLAYER) return 'Computer win';
-        return 'Player 2 win';
-      default:
-        return "Something wen't wrong";
-    }
-  };
-
-  const getWinnerId = (
-    firstPlayerResult: PeopleModel | StarshipsModel,
-    secondPlayerResult: PeopleModel | StarshipsModel,
-    key: string
-  ): number => {
-    if (parseFloat(firstPlayerResult[key]) > parseFloat(secondPlayerResult[key])) return 1;
-    if (parseFloat(firstPlayerResult[key]) < parseFloat(secondPlayerResult[key])) return 2;
-    return 0;
-  };
-
   const getWinner = (playersRound: PlayerRound[], key: string) => {
     const winner = getWinnerId(playersRound[0].item, playersRound[1].item, key);
-    const winnerMessage = getWinnerMessage(playersRound[0].item, playersRound[1].item, key);
+    const winnerMessage = getWinnerMessage(playersRound[0].item, playersRound[1].item, key, type);
     setRoundWinnerMessage(winnerMessage);
     if (winner !== 0) changeScore(winner);
   };
@@ -174,12 +123,18 @@ const Game: React.FC<GameProps> = ({ type }) => {
             </label>
           </div>
         </div>
-        <Button onClick={() => rollRound()} disabled={!itemBank} variant='contained' color='primary'>
+        <Button
+          data-testid='roll-btn'
+          onClick={() => rollRound()}
+          disabled={!itemBank}
+          variant='contained'
+          color='primary'
+        >
           Roll
         </Button>
       </div>
 
-      <div className='container container--evenly p20'>
+      <div data-testid='players-container' className='container container--evenly p20'>
         {players.map((player) => (
           <PlayerCard key={`player-${player.id}`} player={player} />
         ))}

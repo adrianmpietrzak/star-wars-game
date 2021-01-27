@@ -8,7 +8,7 @@ const Home: React.FC = () => {
   const [selectedGameVariant, setSelecteGameVariant] = useState<string | null>(null);
 
   return (
-    <div>
+    <div data-testid='home-container'>
       {selectedGameVariant ? (
         <Game type={selectedGameVariant} />
       ) : (
@@ -22,6 +22,7 @@ const Home: React.FC = () => {
             onClick={() => setSelecteGameVariant(SINGLE_PLAYER)}
             variant='contained'
             color='secondary'
+            data-testid='single-player-btn'
           >
             Single Player
           </Button>
@@ -30,6 +31,7 @@ const Home: React.FC = () => {
             onClick={() => setSelecteGameVariant(MULTI_PLAYER)}
             variant='contained'
             color='primary'
+            data-testid='multi-player-btn'
           >
             Multi Player
           </Button>

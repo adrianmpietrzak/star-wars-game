@@ -57,8 +57,12 @@ const FullCard: React.FC<FullCardProps> = ({ info, keysToPrint, boldKey }) => {
             color='textSecondary'
             key={key}
           >
-            <strong className={classes.key}>{key.replaceAll('_', ' ')}</strong>
-            <span className={classes.textRight}>{info[key]}</span>
+            <strong data-testid={`label-${key}`} className={classes.key}>
+              {key.replace(/_/g, ' ')}
+            </strong>
+            <span data-testid={`value-${key}`} className={classes.textRight}>
+              {info[key]}
+            </span>
           </Typography>
         ))}
       </CardContent>

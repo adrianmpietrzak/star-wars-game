@@ -13,12 +13,15 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player }) => {
   return (
     <div className='text-center'>
       {cpu ? (
-        <Chip icon={<ComputerIcon />} label='AI' color='secondary' />
+        <Chip icon={<ComputerIcon />} data-testid='ai-chip' label='AI' color='secondary' />
       ) : (
-        <Chip icon={<AccountCircleIcon />} label={`Player ${id}`} color='primary' />
+        <Chip icon={<AccountCircleIcon />} data-testid='player-chip' label={`Player ${id}`} color='primary' />
       )}
       <div>
-        Score: <strong className='text--green'>{score}</strong>
+        Score:{' '}
+        <strong className='text--green' data-testid={`QWWQscore-${id}`}>
+          {score}
+        </strong>
       </div>
     </div>
   );

@@ -102,14 +102,8 @@ export default function App() {
   const [people, setPeople] = useState<Array<PeopleModel>>([]);
   const [starships, setStarships] = useState<Array<StarshipsModel>>([]);
 
-  const peopleMemo = useMemo(() => ({ people, setPeople }), [
-    people,
-    setPeople,
-  ]);
-  const starshipsMemo = useMemo(() => ({ starships, setStarships }), [
-    starships,
-    setStarships,
-  ]);
+  const peopleMemo = useMemo(() => ({ people, setPeople }), [people, setPeople]);
+  const starshipsMemo = useMemo(() => ({ starships, setStarships }), [starships, setStarships]);
 
   const classes = useStyles();
   const theme = useTheme();
@@ -122,38 +116,44 @@ export default function App() {
     const tempStarshipsArray: StarshipsModel[] = [];
 
     const getPeopleResults = async (url?: string) => {
-      request.getPeople(url).then((response) => {
-        tempPeopleArray.push(...response.results);
+      const response = await request.getPeople(url);
+      tempPeopleArray.push(...response.results);
 
-        if (response.next) {
-          getPeopleResults(response.next);
-        } else {
-          setPeople(tempPeopleArray);
-          setPeopleLoading(false);
-        }
-      });
+      if (response.next) {
+        getPeopleResults(response.next);
+      } else {
+        setPeople(tempPeopleArray);
+        setPeopleLoading(false);
+      }
     };
 
     const getStarshipsResults = async (url?: string) => {
-      request.getStarships(url).then((response) => {
-        tempStarshipsArray.push(...response.results);
+      const response = await request.getStarships(url);
+      tempStarshipsArray.push(...response.results);
 
-        if (response.next) {
-          getStarshipsResults(response.next);
-        } else {
-          setStarships(tempStarshipsArray);
-          setStarshipsLoading(false);
-        }
-      });
+      if (response.next) {
+        getStarshipsResults(response.next);
+      } else {
+        setStarships(tempStarshipsArray);
+        setStarshipsLoading(false);
+      }
     };
 
-    getPeopleResults();
-    getStarshipsResults();
+    const getResults = async () => {
+      try {
+        await getPeopleResults();
+        await getStarshipsResults();
+      } catch {
+        console.error('Something went wrong');
+      }
+    };
+
+    getResults();
   }, []);
 
   return (
     <Router>
-      <div className={classes.root}>
+      <div data-testid='app-container' className={classes.root}>
         <Drawer
           variant='permanent'
           className={clsx(classes.drawer, {
@@ -174,11 +174,7 @@ export default function App() {
           >
             {open ? (
               <IconButton onClick={() => setOpen(false)}>
-                {theme.direction === 'rtl' ? (
-                  <ChevronRightIcon />
-                ) : (
-                  <ChevronLeftIcon />
-                )}
+                {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
               </IconButton>
             ) : (
               <IconButton
@@ -223,9 +219,9 @@ export default function App() {
           <Divider />
         </Drawer>
 
-        <main className={classes.content}>
+        <main className={classes.content} data-testid='app-main'>
           {peopleLoading || starshipsLoading ? (
-            <div>Loading</div>
+            <div data-testid='loader'>Loading</div>
           ) : (
             <PeopleContext.Provider value={peopleMemo}>
               <StarshipsContext.Provider value={starshipsMemo}>
