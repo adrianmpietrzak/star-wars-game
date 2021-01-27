@@ -91,9 +91,8 @@ const Game: React.FC<GameProps> = ({ type }) => {
     <div>
       <div className='text-center'>
         <p>
-          Select which type of resource do you want to use - people(
-          <PeopleIcon />) or starships(
-          <FlightIcon />)
+          Select which type of resource do you want to use - people <PeopleIcon fontSize='small' color='secondary' /> or
+          starships <FlightIcon fontSize='small' color='secondary' />
         </p>
         <div className='container container--center mb10'>
           <div className='game-selector'>

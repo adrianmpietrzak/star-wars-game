@@ -221,7 +221,9 @@ export default function App() {
 
         <main className={classes.content} data-testid='app-main'>
           {peopleLoading || starshipsLoading ? (
-            <div data-testid='loader'>Loading</div>
+            <div className='loader-wrapper'>
+              <div data-testid='loader' className='loader'></div>
+            </div>
           ) : (
             <PeopleContext.Provider value={peopleMemo}>
               <StarshipsContext.Provider value={starshipsMemo}>
