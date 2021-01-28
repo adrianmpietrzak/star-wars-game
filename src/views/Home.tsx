@@ -13,7 +13,7 @@ const Home: React.FC = () => {
         <Game type={selectedGameVariant} />
       ) : (
         <div className='text-center'>
-          <p>Hello on Star Wars battle game.</p>
+          <p>Hello on Star Wars battle game</p>
           <p>You can choose one of two options to play</p>
 
           <p>Would you like to play vs AI or vs other player</p>

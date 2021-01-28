@@ -73,6 +73,11 @@ const Game: React.FC<GameProps> = ({ type }) => {
     setPlayers(updatedPlayers);
   };
 
+  const changeItemBank = (resource: string) => {
+    setItemBank(resource);
+    setRoundItems([]);
+  };
+
   useEffect(() => {
     const playersArray: Player[] = [];
 
@@ -102,7 +107,7 @@ const Game: React.FC<GameProps> = ({ type }) => {
               id='people'
               name='itemBank'
               value={PEOPLE}
-              onChange={() => setItemBank(PEOPLE)}
+              onChange={() => changeItemBank(PEOPLE)}
             />
             <label className='game-selector__label' htmlFor='people'>
               <PeopleIcon />
@@ -115,7 +120,7 @@ const Game: React.FC<GameProps> = ({ type }) => {
               id='starships'
               name='itemBank'
               value={STARSHIPS}
-              onChange={() => setItemBank(STARSHIPS)}
+              onChange={() => changeItemBank(STARSHIPS)}
             />
             <label className='game-selector__label' htmlFor='starships'>
               <FlightIcon />
@@ -149,10 +154,12 @@ const Game: React.FC<GameProps> = ({ type }) => {
             />
           ))}
       </div>
-      <div className='text-center'>
-        <h3>Round result:</h3>
-        <p>{roundWinnerMessage}</p>
-      </div>
+      {roundWinnerMessage && roundItems.length ? (
+        <div className='text-center'>
+          <h3>Round result:</h3>
+          <p>{roundWinnerMessage}</p>
+        </div>
+      ) : null}
     </div>
   );
 };
